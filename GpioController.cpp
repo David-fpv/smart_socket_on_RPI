@@ -1,10 +1,9 @@
 #include "GpioController.h"
 
-GpioController::GpioController(const char *chip_path, const unsigned int *gpio_lines, enum gpiod_line_value *values, unsigned int num_lines, const char *consumer) {
+GpioController::GpioController(std::string chip_path, std::vector<uint> gpio_lines, std::vector<enum gpiod_line_value> values, std::string consumer) {
 	chip_path_ = chip_path;
 	gpio_lines_ = gpio_lines;
 	values_ = values;
-	num_lines_ = num_lines;
 	consumer_ = consumer;
 }
 
@@ -17,7 +16,7 @@ int GpioController::init()
 	unsigned int i;
 	int ret;
 
-	chip = gpiod_chip_open(chip_path_);
+	chip = gpiod_chip_open(chip_path_.c_str());
 	if (!chip)
 		return EXIT_FAILURE;
 
@@ -32,20 +31,23 @@ int GpioController::init()
 	if (!lconfig)
 		goto free_settings;
 
-	for (i = 0; i < num_lines_; i++) {
+	for (i = 0; i < gpio_lines_.size(); i++) {
 		ret = gpiod_line_config_add_line_settings(lconfig, &gpio_lines_[i],
 							  1, settings);
 		if (ret)
 			goto free_line_config;
 	}
-	gpiod_line_config_set_output_values(lconfig, values_, num_lines_);
 
-	if (consumer_) {
+	for (i = 0; i < gpio_lines_.size(); i++) {
+		ret = gpiod_line_config_add_line_settings(lconfig, &gpio_lines_[i], 1, settings);
+	}
+
+	if (consumer_.c_str()) {
 		rconfig = gpiod_request_config_new();
 		if (!rconfig)
 			goto free_line_config;
 
-		gpiod_request_config_set_consumer(rconfig, consumer_);
+		gpiod_request_config_set_consumer(rconfig, consumer_.c_str());
 	}
 
 	request_ = gpiod_chip_request_lines(chip, rconfig, lconfig);
@@ -77,8 +79,8 @@ int GpioController::set_pin(int gpio_line, enum gpiod_line_value value)
 {
 	//std::cout << "Gpio line " << pin << " = " << value_str(value) << std::endl;
 	bool flag = 0;
-	for(int i = 0; i < num_lines_; i++) {
-		if (gpio_lines_[i] == gpio_line) {
+	for(int i = 0; i < gpio_lines_.size(); i++) {
+		if (gpio_lines_.at(i) == gpio_line) {
 			flag = 1;
 			break;
 		}
