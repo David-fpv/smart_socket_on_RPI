@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <thread>
+#include <chrono>
 using namespace std;
 
 #include "GpioController.h"
@@ -20,12 +22,12 @@ int main() {
     gpio_controller.init();
 
     for (;;) {
-        sleep(1);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         gpio_controller.set_pin(20, GPIOD_LINE_VALUE_ACTIVE);
         gpio_controller.set_pin(21, GPIOD_LINE_VALUE_ACTIVE);
         gpio_controller.set_pin(26, GPIOD_LINE_VALUE_ACTIVE);
 
-        sleep(1);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         gpio_controller.set_pin(20, GPIOD_LINE_VALUE_INACTIVE);
         gpio_controller.set_pin(21, GPIOD_LINE_VALUE_INACTIVE);
         gpio_controller.set_pin(26, GPIOD_LINE_VALUE_INACTIVE);
