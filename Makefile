@@ -16,4 +16,4 @@ GpioController.o: GpioController.cpp
 	$(CXX) $(CXXFLAGS) -c GpioController.cpp -o GpioController.o
 
 clean:
-	rm -f *.o main
+	rm -f *.o

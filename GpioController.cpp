@@ -75,11 +75,11 @@ GpioController::~GpioController()
     gpiod_line_request_release(request_);
 };
 
-int GpioController::set_pin(int gpio_line, enum gpiod_line_value value)
+int GpioController::set_pin(uint gpio_line, enum gpiod_line_value value)
 {
 	//std::cout << "Gpio line " << pin << " = " << value_str(value) << std::endl;
 	bool flag = 0;
-	for(int i = 0; i < gpio_lines_.size(); i++) {
+	for(size_t i = 0; i < gpio_lines_.size(); i++) {
 		if (gpio_lines_.at(i) == gpio_line) {
 			flag = 1;
 			break;

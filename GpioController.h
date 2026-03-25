@@ -14,7 +14,7 @@ public:
     ~GpioController();
 
     int init();
-    int set_pin(int gpio_line, enum gpiod_line_value value);
+    int set_pin(uint gpio_line, enum gpiod_line_value value);
 
 private:
     struct gpiod_line_request *request_ = NULL;
